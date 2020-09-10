@@ -3,9 +3,19 @@ class LinebotController < ApplicationController
 
   protect_from_forgery with: :null_session
 
+  before_action :validate_signature
+
+  def validate_signature
+    body = requset.body.read
+    signature = requset.env['HTTP_X_LINE_SIGNATURE']
+    unless client.validate_signature(body, signature)
+      error 400 do 'Bad Request' end
+    end
+  end
+
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_secret = ENV["LINE_CHANNEL_SEACRET"]
+      config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
     }
   end
@@ -23,7 +33,7 @@ class LinebotController < ApplicationController
           #Lineから送られてきたメッセージが「アンケート」と一致するかチェック
           if event.message['text'].eql?('アンケート')
             # private内のtempleteメソッドを呼び出す
-            client.reply_message(event['replyToken'], templete)
+            client.reply_message(event['replyToken'], template)
           end
         end
       end
@@ -34,11 +44,11 @@ class LinebotController < ApplicationController
 
   private
 
-  def templete
+  def template
     { 
-      "type": "templete",
+      "type": "template",
       "altText": "this is a confirm templete",
-      "templete": {
+      "template": {
         "type": "confirm",
         "text": "今日の勉強は楽しいですか？",
         "actions": [

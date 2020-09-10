@@ -4,7 +4,7 @@ class LinebotController < ApplicationController
   protect_from_forgery :expect => [:callback]
 
   def client
-    @client ||= line::Bot::Client.new { |config|
+    @client ||= Line::Bot::Client.new { |config|
       config.channel_seacret = ENV["LINE_CHANNEL_SEACRET"]
       config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
     }

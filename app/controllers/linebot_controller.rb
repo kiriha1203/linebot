@@ -7,7 +7,7 @@ class LinebotController < ApplicationController
 
   def validate_signature
     body = requset.body.read
-    signature = requset.env['HTTP_X_LINE_SIGNATURE']
+    signature = request.env['HTTP_X_LINE_SIGNATURE']
     unless client.validate_signature(body, signature)
       error 400 do 'Bad Request' end
     end

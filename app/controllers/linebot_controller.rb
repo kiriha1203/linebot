@@ -41,7 +41,7 @@ class LinebotController < ApplicationController
 
   def templete
     { 
-      "type": "templete"
+      "type": "templete",
       "altText": "this is a confirm templete",
       "templete": {
         "type": "confirm",
